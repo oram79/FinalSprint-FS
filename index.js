@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 
 const PORT = 3000;
 //TODO: Update this URI to match your own MongoDB setup
-const MONGO_URI = 'mongodb://localhost:27017/keyin_test';
+const MONGO_URI = 'mongodb+srv://oram_79:Sadie2011!@cluster0.nbs7f.mongodb.net/';
 const app = express();
 expressWs(app);
 
@@ -22,6 +22,23 @@ app.use(session({
     saveUninitialized: false,
 }));
 let connectedClients = [];
+
+const userSchema = new mongoose.Schema({
+    username: {type: String, required: true },
+    password: {type: String, required: true },
+    role: {type: String, required: true},
+});
+const User = mongoose.model('User', userSchema);
+
+const pollSchema = new mongoose.Schema({
+    question: { type: String, required: true },
+    options: [
+        {
+            answer: { type: String, required: true }
+        }
+    ]
+})
+const Poll = mongoose.model('Poll', pollSchema);
 
 //Note: Not all routes you need are present here, some are missing and you'll need to add them yourself.
 
