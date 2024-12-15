@@ -84,8 +84,8 @@ app.post('/login', async (request, response) => {
 });
 
 app.get('/signup', async (request, response) => {
-    if (request.session.user?.id) {
-        return response.redirect('/dashboard');
+    if (request.session.userId) {
+        return response.redirect('/');
     }
 
     return response.render('signup', { errorMessage: null });
@@ -100,7 +100,7 @@ app.post('/signup', async (request, response) => {
         const hashedpassword = await bcrypt.hash(password,10);
         const user1 = new User({ username: username, password: hashedpassword, role: "user "});
         await user1.save();
-        return response.redirect('/');
+        return response.redirect('login');
     }
 })
 
