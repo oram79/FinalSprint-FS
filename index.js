@@ -34,7 +34,8 @@ const pollSchema = new mongoose.Schema({
     question: { type: String, required: true },
     options: [
         {
-            answer: { type: String, required: true }
+            answer: { type: String, required: true },
+            votes: { type: Number, required: true }
         }
     ]
 })
@@ -64,11 +65,22 @@ app.get('/', async (request, response) => {
 });
 
 app.get('/login', async (request, response) => {
-    
+    const errorMessage = request.query.error || null;
+    return response.render('login', {errorMessage});
 });
 
 app.post('/login', async (request, response) => {
-    
+    const requestBody = request.body;
+    const user = await User.findOne({username: requestBody.username});
+    if (!user) {
+        console.error("Incorrect Username Or Password");
+        return response.redirect('/login');
+    }
+    else {
+        request.session.userId = user._id;
+        request.session.username = user.username;
+        return response.redirect('profile');
+    }
 });
 
 app.get('/signup', async (request, response) => {
@@ -79,18 +91,37 @@ app.get('/signup', async (request, response) => {
     return response.render('signup', { errorMessage: null });
 });
 
+app.post('/signup', async (request, response) => {
+    const {username, password} = request.body;
+    const user = await User.findOne({username})
+    if(user){
+        return response.status(401).render('signup',{errorMessage: "Username Unavailable"});
+    } else {
+        const hashedpassword = await bcrypt.hash(password,10);
+        const user1 = new User({ username: username, password: hashedpassword, role: "user "});
+        await user1.save();
+        return response.redirect('/');
+    }
+})
+
 app.get('/dashboard', async (request, response) => {
-    if (!request.session.user?.id) {
+    const filter = {};
+    const allpolls = await Poll.find(filter);
+    if (!request.session.userID) {
         return response.redirect('/');
     }
 
     //TODO: Fix the polls, this should contain all polls that are active. I'd recommend taking a look at the
     //authenticatedIndex template to see how it expects polls to be represented
-    return response.render('index/authenticatedIndex', { polls: [] });
+    return response.render('index/authenticatedIndex', { polls: allpolls });
 });
 
 app.get('/profile', async (request, response) => {
-    
+    if (!request.session.userId) {
+        return response.redirect('/');
+    }
+    const username = request.session.username;
+    return response.render('profile', {username: username});
 });
 
 app.get('/createPoll', async (request, response) => {
@@ -134,6 +165,15 @@ async function onCreateNewPoll(question, pollOptions) {
 
     return null;
 }
+
+app.post('/logout', (request, response) => {
+    request.session.destroy((error) => {
+        if (error) {
+            return response.status(500).send('Failed to log out.');
+        }
+        response.redirect('/');
+    });
+});
 
 /**
  * Handles processing a new vote on a poll
