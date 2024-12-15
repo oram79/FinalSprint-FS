@@ -4,13 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile Page</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <div class="main-content">
-    <h1 class="retro-heading">Profile Page</h1>
-    <h2 class="retro-subheading">Welcome, <%= username %></h2>
-    <p class="retro-text">Number of Polls Voted In:</p>
+  <div class="container">
+    <h1>Profile Page</h1>
+    <h2>Welcome, <%= username %>!</h2>
+    <p>Number of Polls Voted In:</p>
+    <a href="/createPoll" class="btn">Start Voting!</a>
+    <form action="/logout" method="post" class="logout-form">
+      <button type="submit">Logout</button>
+    </form>
   </div>
 </body>
 </html>
+

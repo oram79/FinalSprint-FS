@@ -1,5 +1,3 @@
-// Establish a WebSocket connection to the server
-const socket = new WebSocket('ws://localhost:3000/ws');
 
 // Listen for messages from the server
 socket.addEventListener('message', (event) => {

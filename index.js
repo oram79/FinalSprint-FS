@@ -4,6 +4,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
+const { error } = require('console');
 
 const PORT = 3000;
 //TODO: Update this URI to match your own MongoDB setup
@@ -95,7 +96,7 @@ app.post('/signup', async (request, response) => {
     const {username, password} = request.body;
     const user = await User.findOne({username})
     if(user){
-        return response.status(401).render('signup',{errorMessage: "Username Unavailable"});
+        return response.status(401).render('signup',{errorMessage: "Username Is Already Taken"});
     } else {
         const hashedpassword = await bcrypt.hash(password,10);
         const user1 = new User({ username: username, password: hashedpassword, role: "user "});
@@ -129,7 +130,7 @@ app.get('/createPoll', async (request, response) => {
         return response.redirect('/');
     }
 
-    return response.render('createPoll')
+    return response.render('index/authenticatedIndex')
 });
 
 // Poll creation
@@ -158,7 +159,7 @@ async function onCreateNewPoll(question, pollOptions) {
     }
     catch (error) {
         console.error(error);
-        return "Error creating the poll, please try again";
+        return "There Was An Error Creating The Poll";
     }
 
     //TODO: Tell all connected sockets that a new poll was added
@@ -169,7 +170,7 @@ async function onCreateNewPoll(question, pollOptions) {
 app.post('/logout', (request, response) => {
     request.session.destroy((error) => {
         if (error) {
-            return response.status(500).send('Failed to log out.');
+            return response.status(500).send('Error Loggin Out');
         }
         response.redirect('/');
     });
@@ -189,6 +190,6 @@ async function onNewVote(pollId, selectedOption) {
         
     }
     catch (error) {
-        console.error('Error updating poll:', error);
+        console.error('Error Updating Poll:', error);
     }
 }
