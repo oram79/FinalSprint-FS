@@ -1,19 +1,32 @@
-<div class="main-content">
-    <h1>Login</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="main-content">
+    <h1 class="retro-heading">Login</h1>
     <% if (errorMessage) { %>
-        <p class="error-message"><%= errorMessage %></p>
+      <p class="error-message"><%= errorMessage %></p>
     <% } %>
-    <form action="/login" method="POST">
-        <div class="form-input-container">
-            <label for="username">Username:</label>
-            <input type="text" name="username" id="username" required>
-        </div>
-        <div class="form-input-container">
-            <label for="password">Password:</label>
-            <input type="password" name="password" id="password" required>
-        </div>
-        <button type="submit">Login</button>
+    <form action="/login" method="POST" class="retro-form">
+      <div class="form-input-container">
+        <label for="username" class="retro-label">Username:</label>
+        <input type="text" id="username" name="username" class="retro-input" required>
+      </div>
+      <div class="form-input-container">
+        <label for="password" class="retro-label">Password:</label>
+        <input type="password" id="password" name="password" class="retro-input" required>
+      </div>
+      <button type="submit" class="action-button full-width">Login</button>
     </form>
-</div>
+    <p class="register-link-container">
+      Don't have an account? 
+      <a href="/signup" class="register-link">Sign up!</a>
+    </p>
+  </div>
 </body>
 </html>
